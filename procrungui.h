@@ -12,7 +12,7 @@
 
 #include <procrungui/procrungui-config.h>
 
-//! brief description
+//! A widget that
 class PROCRUNGUI_EXPORT ProcRunGui {
 
 public:

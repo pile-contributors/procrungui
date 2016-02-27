@@ -1,6 +1,6 @@
 
 # enable/disable cmake debug messages related to this pile
-set (PROCRUNGUI_DEBUG_MSG ON)
+set (PROCRUNGUI_DEBUG_MSG OFF)
 
 # make sure support code is present; no harm
 # in including it twice; the user, however, should have used
@@ -21,19 +21,26 @@ macro    (procrunguiInit
         "procrungui.h")
     set(PROCRUNGUI_SOURCES
         "procrungui.cc")
+    set(PROCRUNGUI_UIS
+        "procrungui.ui")
+
+    set(PROCRUNGUI_QT_MODS
+        "Core"
+        "Widgets")
 
     pileSetSources(
         "${PROCRUNGUI_INIT_NAME}"
         "${PROCRUNGUI_HEADERS}"
-        "${PROCRUNGUI_SOURCES}")
+        "${PROCRUNGUI_SOURCES}"
+        "${PROCRUNGUI_UIS}")
 
     pileSetCommon(
         "${PROCRUNGUI_INIT_NAME}"
         "0;0;1;d"
         "ON"
         "${ref_cnt_use_mode}"
-        ""
-        "category1"
-        "tag1;tag2")
+        "ProcRun"
+        "runtime"
+        "gui;process")
 
 endmacro ()
