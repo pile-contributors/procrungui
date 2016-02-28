@@ -39,7 +39,7 @@ macro    (procrunguiInit
         "0;0;1;d"
         "ON"
         "${ref_cnt_use_mode}"
-        "ProcRun"
+        "ProcRun;AppLib"
         "runtime"
         "gui;process")
 
