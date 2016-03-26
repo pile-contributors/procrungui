@@ -31,6 +31,7 @@ class PrgProcess;
 class ProcRunModel;
 class ProcRunItem;
 class ProcRunItemBase;
+struct ProcRunData;
 
 //! A widget that shows and manages processes.
 class PROCRUNGUI_EXPORT ProcRunGui : public QWidget {
@@ -41,7 +42,10 @@ class PROCRUNGUI_EXPORT ProcRunGui : public QWidget {
 public:
 
     //! The callback used to inform the caller that a process finished.
-    typedef void (*Kb) (ProcRunGui *, PrgProcess *, void*);
+    typedef void (*Kb) (
+            ProcRunGui *,
+            PrgProcess *,
+            void*);
 
 
     //! Default constructor.
@@ -56,8 +60,15 @@ public:
     runProgram (
             const QString & s_program,
             const QStringList & sl_args = QStringList(),
-            const QString s_crt_path = QString (),
+            const QString & s_crt_path = QString (),
             const QStringList & sl_input = QStringList(),
+            Kb kb = NULL,
+            void * user_data = NULL);
+
+    //! We should run a program.
+    PrgProcess *
+    runProgram (
+            const ProcRunData & data,
             Kb kb = NULL,
             void * user_data = NULL);
 
@@ -122,7 +133,7 @@ public slots:
 
     //! Creates a new group around selected item.
     void
-    addNewGroup();
+    addNewGroup ();
 
 protected:
 
@@ -148,7 +159,6 @@ protected:
     closeEvent (
             QCloseEvent *);
 
-
     virtual void
     timerEvent (
             QTimerEvent *);
@@ -163,23 +173,36 @@ private slots:
     on_tabWidget_tabCloseRequested (
             int index);
 
-    void on_buttonBox_clicked(QAbstractButton *button);
+    void
+    on_buttonBox_clicked (
+            QAbstractButton *button);
 
-    void on_runButton_clicked();
+    void
+    on_runButton_clicked ();
 
-    void on_terminateButton_clicked();
+    void
+    on_terminateButton_clicked ();
 
-    void on_killButton_clicked();
+    void
+    on_killButton_clicked ();
 
-    void on_treeView_customContextMenuRequested(const QPoint &pos);
+    void
+    on_treeView_customContextMenuRequested (
+            const QPoint &pos);
 
-    void on_argumentsListWidget_itemChanged(QListWidgetItem *item);
+    void
+    on_argumentsListWidget_itemChanged (
+            QListWidgetItem *item);
 
-    void on_inputListWidget_itemChanged(QListWidgetItem *item);
+    void
+    on_inputListWidget_itemChanged (
+            QListWidgetItem *item);
 
-    void on_programButton_clicked();
+    void
+    on_programButton_clicked();
 
-    void on_wrkDirButton_clicked();
+    void
+    on_wrkDirButton_clicked();
 
 signals:
 
@@ -188,7 +211,12 @@ signals:
     aboutToClose ();
 
 protected slots:
-    void treeviewSelectionChanged(const QModelIndex &current, const QModelIndex &previous);
+
+    void
+    treeviewSelectionChanged (
+            const QModelIndex &current,
+            const QModelIndex &previous);
+
 private:
     Ui::ProcRunGui *ui; /**< ui components */
     QList<PrgProcess*> processes_; /**< the list of processes */

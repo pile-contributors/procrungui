@@ -280,24 +280,31 @@ ProcRunGui::~ProcRunGui()
 /* ------------------------------------------------------------------------- */
 PrgProcess *ProcRunGui::runProgram (
         const QString & s_program, const QStringList &sl_args,
-        const QString s_crt_path, const QStringList &sl_input,
+        const QString & s_crt_path, const QStringList &sl_input,
         ProcRunGui::Kb kb, void *user_data)
+{
+    ProcRunData data (s_program, sl_args, s_crt_path, sl_input);
+    return runProgram (data, kb, user_data);
+}
+/* ========================================================================= */
+
+/* ------------------------------------------------------------------------- */
+PrgProcess *ProcRunGui::runProgram (
+        const ProcRunData &data, ProcRunGui::Kb kb, void *user_data)
 {
     PROCRUNGUI_TRACE_ENTRY;
     PrgProcess * result = new PrgProcess (this, kb, user_data);
     processes_.append (result);
-    result->setProgram (s_program);
-    result->setArguments (sl_args);
-    result->setWorkingDirectory (s_crt_path);
+    data.setupProcess (result);
 
     result->widget_ = new QLabel ();
     result->widget_->setText (tr ("%1> %2")
-                             .arg (s_program)
-                             .arg (sl_args.join (QChar (' '))));
+                             .arg (data.s_program_)
+                             .arg (data.sl_arguments_.join (QChar (' '))));
 
-    QFileInfo fl (s_program);
+    QFileInfo fl (data.s_program_);
     ui->tabWidget->addTab (result->widget_, QIcon(), fl.baseName ());
-    result->perform (sl_input);
+    result->perform (data.sl_input_);
 
     PROCRUNGUI_TRACE_EXIT;
     return result;
