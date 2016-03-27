@@ -18,10 +18,13 @@ macro    (procrunguiInit
 
     # compose the list of headers and sources
     set(PROCRUNGUI_HEADERS
+        "procdatawdg.h"
         "procrungui.h")
     set(PROCRUNGUI_SOURCES
+        "procdatawdg.cc"
         "procrungui.cc")
     set(PROCRUNGUI_UIS
+        "procdatawdg.ui"
         "procrungui.ui")
 
     set(PROCRUNGUI_QT_MODS

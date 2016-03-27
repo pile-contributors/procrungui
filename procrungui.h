@@ -7,8 +7,8 @@
  * [MIT License](http://opensource.org/licenses/mit-license.html)
  */
 
-#ifndef GUARD_PROCRUNGUI_H_INCLUDE
-#define GUARD_PROCRUNGUI_H_INCLUDE
+#ifndef GUARD_PROCRUNGUI_INCLUDE
+#define GUARD_PROCRUNGUI_INCLUDE
 
 #include <procrungui/procrungui-config.h>
 
@@ -102,10 +102,6 @@ public:
     saveCommands (
             QSettings & s_data );
 
-    //! Remove all entries from the new program run form.
-    void
-    clearProgForm ();
-
     //! Save all entries from the new program run form.
     void
     saveProgramForm ();
@@ -189,20 +185,6 @@ private slots:
     void
     on_treeView_customContextMenuRequested (
             const QPoint &pos);
-
-    void
-    on_argumentsListWidget_itemChanged (
-            QListWidgetItem *item);
-
-    void
-    on_inputListWidget_itemChanged (
-            QListWidgetItem *item);
-
-    void
-    on_programButton_clicked();
-
-    void
-    on_wrkDirButton_clicked();
 
 signals:
 

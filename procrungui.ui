@@ -131,38 +131,41 @@
      </widget>
      <widget class="QWidget" name="page_2">
       <layout class="QGridLayout" name="gridLayout">
-       <item row="0" column="2">
-        <widget class="QLabel" name="label">
-         <property name="text">
-          <string>Program</string>
+       <item row="2" column="2" colspan="2">
+        <widget class="Line" name="line">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>12</height>
+          </size>
          </property>
-         <property name="buddy">
-          <cstring>programLineEdit</cstring>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="2">
-        <widget class="QLabel" name="label_4">
-         <property name="text">
-          <string>Program Input</string>
-         </property>
-         <property name="buddy">
-          <cstring>inputListWidget</cstring>
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
          </property>
         </widget>
        </item>
-       <item row="3" column="2">
-        <widget class="QLabel" name="wrkDirLabel">
-         <property name="text">
-          <string>Working directory</string>
+       <item row="3" column="2" colspan="2">
+        <widget class="QDialogButtonBox" name="buttonBox">
+         <property name="standardButtons">
+          <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok|QDialogButtonBox::Reset|QDialogButtonBox::Save</set>
          </property>
-         <property name="buddy">
-          <cstring>wrkDirLineEdit</cstring>
+        </widget>
+       </item>
+       <item row="1" column="0" rowspan="3">
+        <widget class="QTreeView" name="treeView">
+         <property name="contextMenuPolicy">
+          <enum>Qt::CustomContextMenu</enum>
          </property>
         </widget>
        </item>
        <item row="0" column="0">
         <widget class="QLabel" name="label_2">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="text">
           <string>Saved commands</string>
          </property>
@@ -171,20 +174,7 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="3" colspan="2">
-        <widget class="QLineEdit" name="programLineEdit"/>
-       </item>
-       <item row="1" column="2">
-        <widget class="QLabel" name="label_3">
-         <property name="text">
-          <string>Arguments</string>
-         </property>
-         <property name="buddy">
-          <cstring>argumentsListWidget</cstring>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1" rowspan="6">
+       <item row="0" column="1" rowspan="4">
         <widget class="Line" name="line_2">
          <property name="minimumSize">
           <size>
@@ -203,63 +193,8 @@
          </property>
         </widget>
        </item>
-       <item row="3" column="3">
-        <widget class="QLineEdit" name="wrkDirLineEdit"/>
-       </item>
-       <item row="1" column="0" rowspan="5">
-        <widget class="QTreeView" name="treeView">
-         <property name="contextMenuPolicy">
-          <enum>Qt::CustomContextMenu</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="5">
-        <widget class="QToolButton" name="programButton">
-         <property name="text">
-          <string>...</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="3" colspan="3">
-        <widget class="QListWidget" name="argumentsListWidget">
-         <property name="contextMenuPolicy">
-          <enum>Qt::CustomContextMenu</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="3" colspan="3">
-        <widget class="QListWidget" name="inputListWidget">
-         <property name="contextMenuPolicy">
-          <enum>Qt::CustomContextMenu</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="5">
-        <widget class="QToolButton" name="wrkDirButton">
-         <property name="text">
-          <string>...</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="2" colspan="4">
-        <widget class="Line" name="line">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>12</height>
-          </size>
-         </property>
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="2" colspan="4">
-        <widget class="QDialogButtonBox" name="buttonBox">
-         <property name="standardButtons">
-          <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok|QDialogButtonBox::Reset|QDialogButtonBox::Save</set>
-         </property>
-        </widget>
+       <item row="0" column="2" rowspan="2" colspan="2">
+        <widget class="ProcDataWdg" name="procDataWidget" native="true"/>
        </item>
       </layout>
      </widget>
@@ -267,12 +202,16 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ProcDataWdg</class>
+   <extends>QWidget</extends>
+   <header location="global">procrungui/procdatawdg.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <tabstops>
   <tabstop>treeView</tabstop>
-  <tabstop>programLineEdit</tabstop>
-  <tabstop>argumentsListWidget</tabstop>
-  <tabstop>inputListWidget</tabstop>
-  <tabstop>wrkDirLineEdit</tabstop>
   <tabstop>tabWidget</tabstop>
   <tabstop>plainTextEdit</tabstop>
  </tabstops>

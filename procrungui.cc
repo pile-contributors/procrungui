@@ -29,6 +29,7 @@
 #include <QStyle>
 #include <QApplication>
 #include <QFileDialog>
+#include <QListWidgetItem>
 
 #include <assert.h>
 
@@ -237,29 +238,6 @@ ProcRunGui::ProcRunGui(QWidget * parent) :
     PROCRUNGUI_TRACE_ENTRY;
     ui->setupUi (this);
 
-    QListWidgetItem * it;
-    it = new QListWidgetItem (
-        qApp->style()->standardIcon (
-                    QStyle::SP_ArrowRight),
-                tr ("Add new argument"));
-    it->setData (Qt::UserRole, it->text());
-    it->setFlags (it->flags() |
-                  Qt::ItemIsEditable |
-                  Qt::ItemIsEnabled |
-                  Qt::ItemIsSelectable);
-    ui->argumentsListWidget->addItem (it);
-
-    it = new QListWidgetItem (
-        qApp->style()->standardIcon (
-                    QStyle::SP_ArrowRight),
-                tr ("Add new input"));
-    it->setData (Qt::UserRole, it->text());
-    it->setFlags (it->flags() |
-                  Qt::ItemIsEditable |
-                  Qt::ItemIsEnabled |
-                  Qt::ItemIsSelectable);
-    ui->inputListWidget->addItem (it);
-
     startTimer (100);
     loadCommands ();
     PROCRUNGUI_TRACE_EXIT;
@@ -417,7 +395,6 @@ void ProcRunGui::setCmdModel (ProcRunModel * mdl)
 ProcRunItemBase *ProcRunGui::selectedCmdEntry ()
 {
     ProcRunItemBase * result = NULL;
-    int index = -1;
     QItemSelectionModel * slc = ui->treeView->selectionModel ();
     if (slc != NULL) {
         QModelIndex mi = slc->currentIndex();
@@ -618,7 +595,7 @@ void ProcRunGui::on_buttonBox_clicked (QAbstractButton *button)
 {
     if (ui->buttonBox->button (QDialogButtonBox::Reset) == button) {
         item_in_form_ = NULL;
-        clearProgForm ();
+        ui->procDataWidget->clearProgForm ();
     } else if (ui->buttonBox->button (QDialogButtonBox::Save) == button) {
         saveProgramForm ();
     } else if (ui->buttonBox->button (QDialogButtonBox::Ok) == button) {
@@ -633,24 +610,6 @@ void ProcRunGui::on_buttonBox_clicked (QAbstractButton *button)
 void ProcRunGui::on_runButton_clicked()
 {
     ui->stackedWidget->setCurrentIndex (1);
-}
-/* ========================================================================= */
-
-/* ------------------------------------------------------------------------- */
-void ProcRunGui::clearProgForm ()
-{
-    ui->programLineEdit->clear ();
-    while (ui->argumentsListWidget->count() > 1) {
-        if (ui->argumentsListWidget->item (0)->icon().isNull()) {
-            delete ui->argumentsListWidget->takeItem (0);
-        }
-    }
-    while (ui->inputListWidget->count() > 1) {
-        if (ui->inputListWidget->item (0)->icon().isNull()) {
-            delete ui->inputListWidget->takeItem (0);
-        }
-    }
-    ui->wrkDirLineEdit->clear ();
 }
 /* ========================================================================= */
 
@@ -680,25 +639,7 @@ void ProcRunGui::saveProgramForm ()
         }
         cmdmodl_->insertItem (item_in_form_, index, gr);
     }
-
-    item_in_form_->s_program_ = ui->programLineEdit->text ();
-
-    item_in_form_->sl_arguments_.clear ();
-    int i_max = ui->argumentsListWidget->count ();
-    for (int i = 0; i < i_max; ++i) {
-        QListWidgetItem * li = ui->argumentsListWidget->item (i);
-        item_in_form_->sl_arguments_.append (li->text ());
-    }
-
-    item_in_form_->sl_input_.clear ();
-    i_max = ui->inputListWidget->count ();
-    for (int i = 0; i < i_max; ++i) {
-        QListWidgetItem * li = ui->inputListWidget->item (i);
-        item_in_form_->sl_input_.append (li->text ());
-    }
-
-    item_in_form_->s_wrk_dir_= ui->wrkDirLineEdit->text ();
-
+    ui->procDataWidget->getData (*item_in_form_);
     cmdmodl_->itemChanged (item_in_form_);
 }
 /* ========================================================================= */
@@ -710,12 +651,8 @@ void ProcRunGui::loadProgramForm (ProcRunItem * item)
         return;
     if (item_in_form_ == item)
         return;
-    clearProgForm ();
-
-    ui->programLineEdit->setText (item->s_program_);
-    ui->argumentsListWidget->addItems (item->sl_arguments_);
-    ui->inputListWidget->addItems (item->sl_input_);
-    ui->wrkDirLineEdit->setText (item->s_wrk_dir_);
+    ui->procDataWidget->clearProgForm ();
+    ui->procDataWidget->setCachedData (*item, true);
 
     item_in_form_ = item;
 }
@@ -820,46 +757,6 @@ void ProcRunGui::removeItem (ProcRunItemBase * item)
 /* ========================================================================= */
 
 /* ------------------------------------------------------------------------- */
-void ProcRunGui::on_argumentsListWidget_itemChanged (QListWidgetItem *item)
-{
-    if (b_list_lock_)
-        return;
-    b_list_lock_ = true;
-    if (!item->icon().isNull()) {
-        QListWidgetItem * li = new QListWidgetItem (item->text ());
-        li->setFlags (li->flags() |
-                      Qt::ItemIsEditable |
-                      Qt::ItemIsEnabled |
-                      Qt::ItemIsSelectable);
-        ui->argumentsListWidget->insertItem (
-                    ui->argumentsListWidget->count() - 2, li);
-        item->setText (item->data (Qt::UserRole).toString ());
-    }
-    b_list_lock_ = false;
-}
-/* ========================================================================= */
-
-/* ------------------------------------------------------------------------- */
-void ProcRunGui::on_inputListWidget_itemChanged (QListWidgetItem *item)
-{
-    if (b_list_lock_)
-        return;
-    b_list_lock_ = true;
-    if (!item->icon().isNull()) {
-        QListWidgetItem * li = new QListWidgetItem (item->text ());
-        li->setFlags (li->flags() |
-                      Qt::ItemIsEditable |
-                      Qt::ItemIsEnabled |
-                      Qt::ItemIsSelectable);
-        ui->inputListWidget->insertItem (
-                    ui->inputListWidget->count() - 2, li);
-        item->setText (item->data (Qt::UserRole).toString ());
-    }
-    b_list_lock_ = false;
-}
-/* ========================================================================= */
-
-/* ------------------------------------------------------------------------- */
 void ProcRunGui::treeviewSelectionChanged (
         const QModelIndex &current, const QModelIndex &)
 {
@@ -876,52 +773,6 @@ void ProcRunGui::treeviewSelectionChanged (
 
     if (it->type () == ProcRunItemBase::CommandType) {
         loadProgramForm (static_cast<ProcRunItem*>(it));
-    }
-}
-/* ========================================================================= */
-
-/* ------------------------------------------------------------------------- */
-void ProcRunGui::on_programButton_clicked()
-{
-    QFileDialog dialog (this);
-    dialog.setFileMode (QFileDialog::ExistingFile);
-    dialog.setViewMode (QFileDialog::Detail);
-
-    // filters
-    QStringList filters;
-    filters.append (QLatin1String ("Programs (*.exe)"));
-    filters.append (trUtf8 ("All Files (*)"));
-    dialog.setNameFilters (filters);
-
-    dialog.selectFile (
-                QDir::fromNativeSeparators (
-                    ui->programLineEdit->text ()));
-
-    if (dialog.exec()) {
-        if (dialog.selectedFiles().count() == 1) {
-            ui->programLineEdit->setText (QDir::toNativeSeparators (
-                        dialog.selectedFiles ().at (0)));
-        }
-    }
-}
-/* ========================================================================= */
-
-/* ------------------------------------------------------------------------- */
-void ProcRunGui::on_wrkDirButton_clicked()
-{
-    QFileDialog dialog (this);
-    dialog.setFileMode (QFileDialog::Directory);
-    dialog.setViewMode (QFileDialog::Detail);
-    dialog.setOption (QFileDialog::ShowDirsOnly, true);
-    QString s_path = ui->wrkDirLineEdit->text ();
-    dialog.selectFile (QDir::fromNativeSeparators (s_path));
-
-    if (dialog.exec()) {
-        if (dialog.selectedFiles().count() == 1) {
-            ui->wrkDirLineEdit->setText (
-                        QDir::toNativeSeparators (
-                            dialog.selectedFiles ().at (0)));
-        }
     }
 }
 /* ========================================================================= */
