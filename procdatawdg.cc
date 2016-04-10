@@ -98,12 +98,35 @@ void ProcDataWdg::reloadFromCache ()
 {
     loadData (item_in_form_);
 }
+/* ========================================================================= */
 
+/* ------------------------------------------------------------------------- */
 void ProcDataWdg::loadData (const ProcRunData &data)
 {
     ui->programLineEdit->setText (data.s_program_);
-    ui->argumentsListWidget->addItems (data.sl_arguments_);
-    ui->inputListWidget->addItems (data.sl_input_);
+
+    foreach(const QString & s_iter, data.sl_arguments_) {
+        QListWidgetItem * li = new QListWidgetItem (s_iter);
+        li->setFlags (li->flags() |
+                      Qt::ItemIsEditable |
+                      Qt::ItemIsEnabled |
+                      Qt::ItemIsSelectable);
+        ui->argumentsListWidget->addItem (li);
+    }
+    // ui->argumentsListWidget->addItems (data.sl_arguments_);
+    ui->argumentsListWidget->addItem (ui->argumentsListWidget->takeItem(0));
+
+    //ui->inputListWidget->addItems (data.sl_input_);
+    foreach(const QString & s_iter, data.sl_input_) {
+        QListWidgetItem * li = new QListWidgetItem (s_iter);
+        li->setFlags (li->flags() |
+                      Qt::ItemIsEditable |
+                      Qt::ItemIsEnabled |
+                      Qt::ItemIsSelectable);
+        ui->inputListWidget->addItem (li);
+    }
+    ui->inputListWidget->addItem (ui->inputListWidget->takeItem(0));
+
     ui->wrkDirLineEdit->setText (data.s_wrk_dir_);
 }
 /* ========================================================================= */
@@ -198,8 +221,8 @@ void ProcDataWdg::on_argumentsListWidget_itemChanged (QListWidgetItem *item)
                       Qt::ItemIsEditable |
                       Qt::ItemIsEnabled |
                       Qt::ItemIsSelectable);
-        ui->argumentsListWidget->insertItem (
-                    ui->argumentsListWidget->count() - 2, li);
+        int inspos = ui->argumentsListWidget->row (item);
+        ui->argumentsListWidget->insertItem (inspos, li);
         item->setText (item->data (Qt::UserRole).toString ());
     }
     b_list_lock_ = false;
